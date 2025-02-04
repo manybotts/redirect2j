@@ -1,13 +1,12 @@
 {
-  "name": "Telegram Redirector",
-  "description": "A simple Flask app that redirects to Telegram using deep-linking.",
+  "name": "Telegram Redirector (aiohttp)",
+  "description": "A simple aiohttp app that redirects to Telegram using deep-linking.",
   "repository": "https://github.com/manybotts/redirectorapp",
-  "keywords": ["python", "flask", "telegram", "redirect", "deep-link"],
+  "keywords": ["python", "aiohttp", "telegram", "redirect"],
   "env": {
     "BOT_USERNAME": {
       "description": "Your Telegram bot's username (without the '@')",
-      "required": true,
-      "value": "MyAwesomeBot"
+      "required": true
     }
   },
   "buildpacks": [
