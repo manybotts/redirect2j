@@ -16,16 +16,16 @@ if not BOT_USERNAMES:
 
 # Connect to MongoDB with a dedicated database name
 MONGO_URI = os.environ.get("MONGO_URI", "mongodb+srv://username:password@cluster0.mongodb.net/?retryWrites=true&w=majority")
-MONGO_DB_NAME = os.environ.get("MONGO_DB_NAME", "telegram_redirector")  # Default database name
+MONGO_DB_NAME = os.environ.get("MONGO_DB_NAME", "telegram_redirector")
 client = pymongo.MongoClient(MONGO_URI)
 db = client[MONGO_DB_NAME]  # Use the specified database name
 collection = db["redirect_links"]
 
 async def list_bots_handler(request):
-    """Returns all available bot redirect links in HTML or JSON format."""
+    """Displays available bot redirect links in a stylish HTML page with copy buttons."""
     host = request.host  # Get current domain name
     bot_links = {
-        bot_name: f"https://{host}/bot/{bot_name}/?start=YOUR_PAYLOAD"
+        bot_name: f"https://{host}/bot/{bot_name}/"
         for bot_name in BOT_USERNAMES
     }
 
@@ -33,34 +33,48 @@ async def list_bots_handler(request):
     if request.query.get("format") == "json":
         return web.json_response({"available_bots": bot_links})
 
-    # HTML Page Display
-    html_content = """
+    # Stylish HTML Page
+    html_content = f"""
     <!DOCTYPE html>
     <html>
     <head>
         <title>Available Telegram Bots</title>
         <style>
-            body { font-family: Arial, sans-serif; text-align: center; padding-top: 20px; }
-            .container { max-width: 600px; margin: auto; padding: 20px; border-radius: 8px; background: #f9f9f9; box-shadow: 0px 0px 10px rgba(0,0,0,0.1); }
-            h2 { color: #333; }
-            .bot-link { margin: 10px 0; padding: 10px; background: #007bff; color: #fff; border-radius: 5px; display: inline-block; text-decoration: none; }
-            .bot-link:hover { background: #0056b3; }
+            body {{ font-family: Arial, sans-serif; text-align: center; padding-top: 20px; background: #f4f4f4; }}
+            .container {{ max-width: 600px; margin: auto; padding: 20px; border-radius: 8px; background: #fff; box-shadow: 0px 0px 10px rgba(0,0,0,0.1); }}
+            h2 {{ color: #333; }}
+            .bot-link {{ display: flex; justify-content: space-between; align-items: center; background: #007bff; color: #fff; padding: 10px; margin: 10px 0; border-radius: 5px; text-decoration: none; }}
+            .bot-link:hover {{ background: #0056b3; }}
+            .copy-btn {{ background: #28a745; color: #fff; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; }}
+            .copy-btn:hover {{ background: #218838; }}
         </style>
+        <script>
+            function copyToClipboard(text) {{
+                navigator.clipboard.writeText(text).then(function() {{
+                    alert("Copied: " + text);
+                }});
+            }}
+        </script>
     </head>
     <body>
         <div class="container">
             <h2>Available Telegram Bots</h2>
     """
-    
+
     for bot_name, bot_url in bot_links.items():
-        html_content += f'<p><strong>{bot_name}:</strong> <a class="bot-link" href="{bot_url}" target="_blank">Open Link</a></p>'
-    
+        html_content += f'''
+            <div class="bot-link">
+                <span>{bot_name}</span>
+                <button class="copy-btn" onclick="copyToClipboard('{bot_url}')">Copy URL</button>
+            </div>
+        '''
+
     html_content += "</div></body></html>"
     
     return web.Response(text=html_content, content_type="text/html")
 
 async def redirect_handler(request):
-    """Handles Telegram deep-link redirection."""
+    """Handles Telegram deep-link redirection with a stylish UI."""
     bot_name = request.match_info.get("bot_name")
     start_param = request.query.get("start")
 
@@ -70,12 +84,13 @@ async def redirect_handler(request):
             deep_link = f"tg://resolve?domain={bot_username}&start={start_param}"
             print(f"Redirecting to: {deep_link}")
 
+            # Modern Redirect Page
             html_content = f"""
             <!DOCTYPE html>
             <html>
             <head>
                 <meta charset="utf-8">
-                <title>Redirecting to Telegram...</title>
+                <title>Fetching Your Files...</title>
                 <meta http-equiv="refresh" content="2; url={deep_link}">
                 <script>
                     function redirectToTelegram() {{
@@ -87,12 +102,19 @@ async def redirect_handler(request):
                     }};
                 </script>
                 <style>
-                    body {{ font-family: Arial, sans-serif; text-align: center; padding-top: 50px; }}
+                    body {{ font-family: Arial, sans-serif; text-align: center; padding-top: 100px; background: linear-gradient(to right, #007bff, #6610f2); color: #fff; }}
+                    .container {{ padding: 20px; }}
+                    h1 {{ font-size: 36px; text-shadow: 2px 2px 10px rgba(0,0,0,0.2); }}
+                    .loader {{ border: 6px solid #f3f3f3; border-radius: 50%; border-top: 6px solid #ffffff; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }}
+                    @keyframes spin {{ 0% {{ transform: rotate(0deg); }} 100% {{ transform: rotate(360deg); }} }}
                 </style>
             </head>
             <body>
-                <p>Redirecting to Telegram...</p>
-                <p>If nothing happens, <a href="{deep_link}">click here</a>.</p>
+                <div class="container">
+                    <h1>Fetching Your Files in Lightning Speeds ⚡</h1>
+                    <div class="loader"></div>
+                    <p>If nothing happens, <a href="{deep_link}" style="color: yellow;">click here</a>.</p>
+                </div>
             </body>
             </html>
             """
@@ -108,8 +130,8 @@ async def favicon_handler(request):
 
 # Create the aiohttp application and register routes
 app = web.Application()
-app.router.add_get("/", list_bots_handler)  # Show bot URLs in a clean HTML page
-app.router.add_get("/bot/{bot_name}/", redirect_handler)  # Maintains original long URL structure
+app.router.add_get("/", list_bots_handler)  # Shows bot URLs in a clean HTML page with copy feature
+app.router.add_get("/bot/{bot_name}/", redirect_handler)  # Stylish redirect page
 app.router.add_get("/favicon.ico", favicon_handler)
 
 if __name__ == "__main__":
