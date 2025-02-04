@@ -22,12 +22,12 @@ Users can **copy only the base URL** of their bot effortlessly.
 🔹 **Before:** Plain text list.  
 🔹 **After:** Stylish **copy buttons** and a **modern interface**.  
 
-![Bot Selection Page Preview](https://user-images.githubusercontent.com/your-image-url/bot-list-preview.png)  
+![Bot Selection Page Preview](https://github.com/manybotts/redirect2j/raw/main/images/bot-list-preview.png)  
 
 ### 🔹 Redirect Page (Fetching Files in Style)
 Users see **a big animated message** while being redirected to Telegram.  
 
-![Redirect Page Preview](https://user-images.githubusercontent.com/your-image-url/redirect-preview.png)  
+![Redirect Page Preview](https://github.com/manybotts/redirect2j/raw/main/images/redirect-preview.png)  
 
 ---
 
