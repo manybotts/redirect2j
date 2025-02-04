@@ -14,10 +14,11 @@ except json.JSONDecodeError:
 if not BOT_USERNAMES:
     print("WARNING: No bot usernames are set! Please configure BOT_USERNAMES in Heroku.")
 
-# Connect to MongoDB (Replace with your MongoDB Atlas URL)
-MONGO_URI = os.environ.get("MONGO_URI", "mongodb+srv://username:password@cluster0.mongodb.net/myDatabase?retryWrites=true&w=majority")
+# Connect to MongoDB with a dedicated database name
+MONGO_URI = os.environ.get("MONGO_URI", "mongodb+srv://username:password@cluster0.mongodb.net/?retryWrites=true&w=majority")
+MONGO_DB_NAME = os.environ.get("MONGO_DB_NAME", "telegram_redirector")  # Default database name
 client = pymongo.MongoClient(MONGO_URI)
-db = client["telegram_redirector"]
+db = client[MONGO_DB_NAME]  # Use the specified database name
 collection = db["redirect_links"]
 
 async def list_bots_handler(request):
