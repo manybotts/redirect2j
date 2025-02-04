@@ -11,6 +11,11 @@
     "MONGO_URI": {
       "description": "Your MongoDB Atlas connection URI",
       "required": true
+    },
+    "MONGO_DB_NAME": {
+      "description": "The MongoDB database name to store redirect links.",
+      "required": false,
+      "value": "telegram_redirector"
     }
   },
   "buildpacks": [
