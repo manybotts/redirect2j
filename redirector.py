@@ -1,20 +1,20 @@
 import os
 from aiohttp import web
 
-# Get the bot's username from the environment (without "@")
+# Get the bot's username from the environment
 BOT_USERNAME = os.environ.get("BOT_USERNAME", "default_bot_username")
 if BOT_USERNAME == "default_bot_username":
     print("WARNING: BOT_USERNAME is not set! Please set it in Heroku.")
 
 async def redirect_handler(request):
-    """Handles deep-link redirection to Telegram"""
+    """Handles deep-link redirection to Telegram and auto-closes the browser tab."""
     start_param = request.query.get("start")
     if start_param:
         # Build the Telegram deep-link
         deep_link = f"tg://resolve?domain={BOT_USERNAME}&start={start_param}"
         print(f"Redirecting to: {deep_link}")
 
-        # Return an HTML page that auto-redirects to Telegram
+        # Updated HTML with auto-close feature
         html_content = f"""
         <!DOCTYPE html>
         <html>
@@ -25,8 +25,11 @@ async def redirect_handler(request):
             <script>
                 function redirectToTelegram() {{
                     window.location.href = "{deep_link}";
+                    setTimeout(() => window.close(), 1000);  // Attempt to auto-close
                 }}
-                setTimeout(redirectToTelegram, 500);
+                window.onload = function() {{
+                    setTimeout(redirectToTelegram, 500);
+                }};
             </script>
             <style>
                 body {{ font-family: Arial, sans-serif; text-align: center; padding-top: 50px; }}
@@ -35,6 +38,9 @@ async def redirect_handler(request):
         <body>
             <p>Redirecting to Telegram...</p>
             <p>If nothing happens, <a href="{deep_link}">click here</a>.</p>
+            <script>
+                setTimeout(() => window.close(), 3000);  // Try closing after 3s
+            </script>
         </body>
         </html>
         """
