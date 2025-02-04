@@ -1,11 +1,15 @@
 {
-  "name": "Telegram Redirector (aiohttp)",
-  "description": "A simple aiohttp app that redirects to Telegram using deep-linking.",
+  "name": "Telegram Bot Redirector",
+  "description": "A simple aiohttp app that redirects users to Telegram bots dynamically.",
   "repository": "https://github.com/manybotts/redirectorapp",
-  "keywords": ["python", "aiohttp", "telegram", "redirect"],
+  "keywords": ["python", "aiohttp", "telegram", "redirect", "mongodb"],
   "env": {
-    "BOT_USERNAME": {
-      "description": "Your Telegram bot's username (without the '@')",
+    "BOT_USERNAMES": {
+      "description": "JSON object mapping bot names to their usernames. Example: {\"mybot1\": \"BotUsername1\", \"mybot2\": \"BotUsername2\"}",
+      "required": true
+    },
+    "MONGO_URI": {
+      "description": "Your MongoDB Atlas connection URI",
       "required": true
     }
   },
